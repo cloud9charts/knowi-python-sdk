@@ -1,0 +1,13 @@
+from knowipy import Knowi
+
+knowi = Knowi(customerToken='<your Customer Token here>', flag='sso')
+username = 'user@email.com'
+
+# create sso user
+new_user = knowi.sso_createNewUser(email=username, userGroups=["monty", "python"], role='viewer')
+
+# initiate new session for user
+if new_user.get('statusCode') == 200:
+    new_user_session = knowi.sso_createUserSession(email=username, userToken=new_user['data'], loginUrl=True)
+
+    print(new_user_session)
