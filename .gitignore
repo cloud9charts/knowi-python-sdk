@@ -1,0 +1,22 @@
+# general things to ignore
+*.pyc
+dist/
+build/
+.eggs/
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
+
+
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+workflow.sh
