@@ -113,7 +113,9 @@ class BaseClient:
         """
 
         if apiMethod.startswith("/sso/") and self.flag != "sso":
-            raise e.KnowiException(f'Invalid flag=`{self.flag}` with method={apiMethod}. Flag must be sso')
+            raise e.KnowiException(f'invalid method=`{apiMethod}` with flag=`{self.flag}`, use flag `sso`')
+        if not apiMethod.startswith('/sso') and self.flag == 'sso':
+            raise e.KnowiException(f'invalid method=`{apiMethod}` with flag=`{self.flag}` use flag `mgmt`')
 
         apiUrl = self._get_url(apiMethod)
         requestArgs = {
