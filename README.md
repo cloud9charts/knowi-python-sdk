@@ -15,10 +15,38 @@ Knowi is an augmented analytics platform that instantly transforms any data into
 * This library requires Python 3.6 and above.
 * Execute scripts via `python3`
 
+#### Features
+
+* Dashboard Management
+    * List, create, edit, clone, share, and delete dashboards
+    * View widgets in a dashboard, export dashboards to PDF
+    * Generate simple/secure dashboard share url
+    * List, share, delete dashboard filter-sets
+* Widget Management
+    * List, create, edit, clone, share, and delete widgets
+    * Generate simple/secure widget share url
+* Datasource Management
+    * List, clone, share, and delete datasources
+* Query Management
+    * List, clone, share, run, and delete queries
+* Categories Management
+    * List, copy, share, run, and delete categories
+    * Add and remove assets to/from categories
+* User Management
+    * List, create, edit, and delete users
+    * Transfer user assets to another user 
+* Groups Management
+    * List, create, edit, and delete groups 
+* Natural Language Query Management
+    * Get NLP query suggestions on a dataset
+    * Execute NLP queries against a dataset
+* Dataset Management
+    * Retrieve data from a dataset or query
+
 #### Installation
 We recommend using [PyPI](https://pypi.python.org/pypi) to install the Knowi SDK for Python
 ```bash
-$ pip3 install knowipy
+$ pip3 install knowipy --upgrade
 ```
 > **Note:** You may need to use `python3` before your commands to ensure you use the correct Python path. e.g. `python3 --version`
 
@@ -34,8 +62,9 @@ python3 --version
 
 
 #### Usage
+* See [examples.py](examples) for full usage and examples
 * Retrieve your Client id/secret from your [Knowi](https://www.knowi.com) account
- - Navigate to Settings -> Account Settings https://recordit.co/HAudn0LJ2E 
+    - Navigate to Settings -> Account Settings https://recordit.co/HAudn0LJ2E 
 
 ```python
 from knowipy import Knowi
