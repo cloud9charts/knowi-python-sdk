@@ -616,7 +616,7 @@ class Knowi(BaseClient):
         return self.api_call(f'/users/{userId}', HTTPMethod.GET, params=kwargs)
 
     @validateUserParams
-    def users_create(self, *, email: str, password: Union[str, int], phone: int, groups: List[dict] = None,
+    def users_create(self, *, email: str, password: str, phone: int, groups: List[dict] = None,
                      role: str = 'user', twoFA: bool = False, **kwargs):
         """Create a new regular user with a username/password
 
