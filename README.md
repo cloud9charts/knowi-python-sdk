@@ -42,6 +42,9 @@ Knowi is an augmented analytics platform that instantly transforms any data into
     * Execute NLP queries against a dataset
 * Dataset Management
     * Retrieve data from a dataset or query
+* Single Sign On (SSO)
+    * Create and manage SSO users
+    * Update SSO user attributes including user content filters  
 
 #### Installation
 We recommend using [PyPI](https://pypi.python.org/pypi) to install the Knowi SDK for Python

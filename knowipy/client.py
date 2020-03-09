@@ -825,7 +825,17 @@ class Knowi(BaseClient):
 
         return self.api_call('/sso/queries', HTTPMethod.GET, params=kwargs)
 
-    # SSO USER NATURAL LANGUAGUE PROCESSING
+    def sso_lastActivity(self, sessionToken: str, **kwargs):
+        """Get the latest timestamp in milliseconds for an SSO user's activity. Returns "-1" if user is inactive.
+
+        :param sessionToken: (str) session token after authenticating sso user
+        """
+
+        kwargs.update({"token": sessionToken})
+
+        return self.api_call('/sso/session/lastActive', HTTPMethod.GET, params=kwargs)
+
+    # SSO USER NATURAL LANGUAGE PROCESSING
     def sso_listNlpSuggestions(self, *, sessionToken: str, query: str, **kwargs):
         kwargs.update({"token": sessionToken, "query": query})
 
