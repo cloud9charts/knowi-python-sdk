@@ -2,7 +2,8 @@
 import requests
 
 # Internal Imports
-import knowipy.errors as e
+from knowipy import errors as e
+from knowipy.utils import cleanNullTerms
 
 
 class BaseClient:
@@ -118,6 +119,10 @@ class BaseClient:
             raise e.KnowiException(f'invalid method=`{apiMethod}` with flag=`{self.flag}` use flag `mgmt`')
 
         apiUrl = self._get_url(apiMethod)
+        if data:
+            data = cleanNullTerms(data)
+        elif json:
+            json = cleanNullTerms(json)
         requestArgs = {
             "data":   data,
             "files":  files,
