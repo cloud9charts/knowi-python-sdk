@@ -250,7 +250,6 @@ class Knowi(BaseClient):
                        "chartProperties": chartProps
                        })
 
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
         return self.api_call('/widgets', HTTPMethod.POST, json=kwargs)
 
     def widget_clone(self, *, widgetId: int, newWidgetName: Union[str, int], **kwargs):
@@ -269,7 +268,7 @@ class Knowi(BaseClient):
                        "widgetType":      widgetType,
                        "chartProperties": chartProps
                        })
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
         return self.api_call(f'/widgets/{widgetId}', HTTPMethod.PUT, json=kwargs)
 
     # DATASOURCES
@@ -309,7 +308,6 @@ class Knowi(BaseClient):
             "version":           kwargs.get("version", "5.X.X")  # elastic ["Older Versions"]
         })
 
-        # kwargs = {k: v for k, v in kwargs.items() if v is not None}
         # return self.api_call('/datasources', HTTPMethod.POST, json=kwargs)
 
         raise NotImplementedError
@@ -324,7 +322,6 @@ class Knowi(BaseClient):
         :return:
         """
         # TODO: Not yet implemented
-        # kwargs = {k: v for k, v in kwargs.items() if v is not None}
         # return self.api_call(f'/datasources/{datasourceId}', HTTPMethod.PUT, json=kwargs)
 
         raise NotImplementedError
@@ -646,8 +643,6 @@ class Knowi(BaseClient):
             }
         })
 
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
-
         return self.api_call('/users', HTTPMethod.POST, json=kwargs)
 
     @validateUserParams
@@ -670,8 +665,6 @@ class Knowi(BaseClient):
             "defaultDashboardId": kwargs.get("defaultDashboardId")
 
         })
-
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
         return self.api_call(f'/users/{userId}', HTTPMethod.PUT, json=kwargs)
 
@@ -717,8 +710,6 @@ class Knowi(BaseClient):
             "limit":         limit,
             "runtimeTokens": json.dumps(runtimeToken)
         })
-
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
         return self.api_call(f'/datasets', HTTPMethod.GET, params=kwargs)
 
