@@ -151,20 +151,13 @@ def validateQueryParams(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
 
-        if not kwargs.get('entityName'):
-            raise e.KnowiException(f"missing entityName")
-
-        # TODO: VALIDATE MINIMUM REQ PARAMETERS
-
-        if kwargs.get('categories'):
-            if not isinstance(kwargs['categories'], list):
-                raise TypeError(f"Expected list for categories= {kwargs['categories']} not "
-                                f"{type(kwargs['categories'])}")
-        if kwargs.get('datasource') == 'cloud9charts':
-            assert kwargs['c9ExportDataset'], f"Missing c9ExportDataset={kwargs['c9ExportDataset']}"
-        if kwargs.get('direct'):
-            if kwargs['frequency'] or kwargs['frequencyType']:
-                raise ValueError("can't have direct query with frequency/frequencyType")
+        queryProperty = kwargs.get("queryProperty")
+        if queryProperty.get('categories'):
+            if not isinstance(queryProperty['categories'], list):
+                raise e.KnowiException(f"invalid categories type should be list of int i.e. `[123, 456]`")
+        if queryProperty.get("direct"):
+            if not isinstance("direct", bool):
+                raise e.KnowiException(f"invalid `direct` type, should be a bool: (`True`, `False`)")
 
         return func(*args, **kwargs)
 
@@ -225,12 +218,4 @@ def _validateContentFilters(contentFilter: List[dict] = None):
 
     return contentFilter
 
-
-def _check_dict_key(name: List[dict], supported_keys: List):
-    """ validates attribute keys """
-    for i in name:
-        if not all(key in i for key in supported_keys):
-            raise e.KnowiException(f'missing/invalid properties. must have keys {supported_keys} ')
-
-    # TODO:  refactor decorator validations to use function: _check_dict_key
-    # TODO: generalize exception msg to use Enum class
+# TODO:  refactor to generalize type validations

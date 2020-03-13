@@ -4,7 +4,7 @@ from typing import Dict, List, Union
 
 # Internal Imports
 from knowipy.base_client import BaseClient, HTTPMethod
-from knowipy.decorators import (validateCategoryAssets, validateShareParams, validateUserParams)
+from knowipy.decorators import (validateCategoryAssets, validateQueryParams, validateShareParams, validateUserParams)
 
 
 class Knowi(BaseClient):
@@ -366,50 +366,71 @@ class Knowi(BaseClient):
 
         return self.api_call(f'/queries/{queryId}', HTTPMethod.GET, params=kwargs)
 
-    def query_refresh(self, *, queryId: int, refresh: bool = True, **kwargs):
-        kwargs.update({"runNow": refresh})
+    def query_refresh(self, *, queryId: int, **kwargs):
+        kwargs.update({"runNow": True})
 
         return self.api_call(f'/queries/{queryId}/refreshQuery', HTTPMethod.POST, json=kwargs)
 
-    # @validateQueryParams
-    def query_create(self, *, datasourceId: int = None, directQuery: bool = False, runNow: bool = True, **kwargs):
-        # TODO: Not yet implemented
-        # kwargs.update({
-        #     "properties":                    {
-        #         "c9QLFilter":      kwargs.get("c9QLFilter", "select *"),
-        #         "categories":      kwargs.get("categories", []),
-        #         "datasource":      kwargs.get("datasource"),
-        #         "datasourceId":    datasourceId,
-        #         "descripton":      kwargs.get("description"),
-        #         "direct":          directQuery,
-        #         "dsName":          kwargs.get("dsName"),
-        #         "entityName":      kwargs.get("entityName"),
-        #         "frequency":       str(kwargs.get("frequency")),
-        #         "frequencyType":   str(kwargs.get("frequencyType")),
-        #         "startTime":       str(kwargs.get('startTime')),  # "08/06/2019 11:05-07:00", if blank, whats default?
-        #         "queryStr":        str(kwargs.get("queryStr")),
-        #         "triggered":       kwargs.get("triggered"),
-        #         "overrideVals":    kwargs.get("overrideVals", "All"),
-        #         "c9ExportDataset": kwargs.get("c9ExportDataset", None)  # for cloud9charts warehouse
-        #     },
-        #     "runNow":                        runNow,
-        #     "previewed":                     kwargs.get("previewed", False),  # Might not be needed since on UI
-        #     "drafted":                       kwargs.get("drafted", None),
-        #     "runtimeParamsWithValuesFromUi": kwargs.get("runtimeParamsWithValuesFromUi", None)
-        # })
+    @validateQueryParams
+    def query_create(self, *, datasourceId: int = None, queryName: str = None, queryProperty: dict = None, **kwargs):
+        """ create a query using an existing datasource
 
-        # return self.api_call('/queries', HTTPMethod.POST, json=kwargs)
-        raise NotImplementedError
+        :param datasourceId: datasource ID
+        :param queryName: name of query
+        :param queryProperty: query properties
+        :param kwargs:
+        :return:
+        """
 
-    # @validateQueryParams
-    def query_edit(self, *, queryId: int = None, runNow: bool = True, **kwargs):
-        # TODO:Not yet implemented
-        # kwargs.update({
-        #     "properties": {},
-        #     "runNow":     runNow
-        # })
-        # return self.api_call(f'/queries/{queryId}', HTTPMethod.PUT, json=kwargs)
-        raise NotImplementedError
+        kwargs.update({
+            "properties": {
+                "c9QLFilter":      queryProperty.get("c9QLFilter", "select *"),
+                "categories":      queryProperty.get("categories"),
+                "datasourceId":    datasourceId,
+                "description":     queryProperty.get("description"),
+                "direct":          queryProperty.get("direct", False),
+                "dsName":          queryProperty.get("dsName"),
+                "entityName":      queryName,
+                "queryStr":        str(queryProperty.get("queryStr")),
+                "triggered":       queryProperty.get("triggered"),
+                "overrideVals":    queryProperty.get("overrideVals", "All"),
+                "c9ExportDataset": queryProperty.get("c9ExportDataset", None)  # for cloud9charts warehouse
+            },
+            "runNow":     queryProperty.get("runNow", True),
+            "drafted":    queryProperty.get("drafted", None)
+        })
+
+        return self.api_call('/queries', HTTPMethod.POST, json=kwargs)
+
+    @validateQueryParams
+    def query_edit(self, *, queryId: int = None, datasourceId: int = None, queryProperty: dict = None, **kwargs):
+        """ edit an existing query
+
+        :param queryId: query ID to edit
+        :param datasourceId: datasource ID for existing query
+        :param queryProperty: query properties to update
+        :param kwargs:
+        :return:
+        """
+        kwargs.update({
+            "properties": {
+                "c9QLFilter":      queryProperty.get("c9QLFilter"),
+                "categories":      queryProperty.get("categories"),
+                "datasourceId":    datasourceId,
+                "description":     queryProperty.get("description"),
+                "direct":          queryProperty.get("direct"),
+                "dsName":          queryProperty.get("dsName"),
+                "entityName":      queryProperty.get("entityName"),
+                "queryStr":        str(queryProperty.get("queryStr")),
+                "triggered":       queryProperty.get("triggered"),
+                "overrideVals":    queryProperty.get("overrideVals", "All"),
+                "c9ExportDataset": queryProperty.get("c9ExportDataset")  # for cloud9charts warehouse
+            },
+            "runNow":     queryProperty.get("runNow", True),
+            "drafted":    queryProperty.get("drafted")
+        })
+
+        return self.api_call(f'/queries/{queryId}', HTTPMethod.PUT, json=kwargs)
 
     def query_delete(self, *, queryId: int, removeWidgets: bool = False, **kwargs):
         kwargs.update({"removeWidgets": removeWidgets})
