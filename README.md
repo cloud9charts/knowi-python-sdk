@@ -50,7 +50,7 @@ Knowi is an augmented analytics platform that instantly transforms any data into
 * Parent/Master Customer (Multi-tenancy)
     * Create and manage a multi-tenancy model with a parent/master to sub-customer relationship
     * Administer assets and access from the parent/master to sub-customers
-    ![](https://drive.google.com/uc?export=view&id=1trYK9np0-XfVPW8APwrUqKGHAQzggZGL)
+    ![multi-tenant](https://drive.google.com/uc?export=view&id=1trYK9np0-XfVPW8APwrUqKGHAQzggZGL)
 * System Status Health Checks
     * Checks all or specified Knowi components for connectivity and status report
   
