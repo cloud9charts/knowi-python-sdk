@@ -45,9 +45,14 @@ Knowi is an augmented analytics platform that instantly transforms any data into
 * Single Sign On (SSO)
     * Create and manage SSO users
     * Update SSO user attributes including user content filters  
+
+> Note: The resources below requires additional configuration. Contact support@knowi.com for assistance.    
+* Parent/Master Customer (Multi-tenancy)
+    * Create and manage a multi-tenancy model with a parent/master to sub-customer relationship
+    * Administer assets and access from the parent/master to sub-customers
+    ![](https://drive.google.com/uc?export=view&id=1trYK9np0-XfVPW8APwrUqKGHAQzggZGL)
 * System Status Health Checks
     * Checks all or specified Knowi components for connectivity and status report
-    > Note: This is only available for On-Premise customers and requires additional configuration. Contact support@knowi.com for assistance.
   
 #### Installation
 We recommend using [PyPI](https://pypi.python.org/pypi) to install the Knowi SDK for Python
@@ -79,8 +84,7 @@ import os
 # instantiate the client
 knowi = Knowi(clientId=os.environ['KNOWI_CLIENT_ID'], clientSecret=os.environ['KNOWI_CLIENT_SECRET'])
 
-
-# get list of dashboards
+# get a list of dashboards
 dashboard_list = knowi.dashboard_list()
 
 # to refresh an existing query
