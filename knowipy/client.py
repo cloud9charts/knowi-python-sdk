@@ -734,6 +734,56 @@ class Knowi(BaseClient):
 
         return self.api_call(f'/datasets', HTTPMethod.GET, params=kwargs)
 
+    # SYSTEM STATUS
+    def system_checkAll(self, **kwargs):
+        """ The status API is a public-facing API for determining the status of components and subcomponents in the
+        Knowi infrastructure. checks all system components for health status. Requires system super admin permissions
+        to access.
+
+        :param kwargs:
+        :return:
+        """
+        return self.api_call('/kpi', HTTPMethod.GET, params=kwargs)
+
+    def system_checkMySQL(self, **kwargs):
+        """ check system status for Mongo """
+
+        return self.api_call('/kpi/checkMySQL', HTTPMethod.GET, params=kwargs)
+
+    def system_checkMongoDB(self, **kwargs):
+        """ check system status for MySQL """
+
+        return self.api_call('/kpi/checkMongoDB', HTTPMethod.GET, params=kwargs)
+
+    def system_checkMessageMQ(self, **kwargs):
+        """ check system status for Rabbit MQ """
+
+        return self.api_call('/kpi/checkMessageMQ', HTTPMethod.GET, params=kwargs)
+
+    def system_checkHostedConnector(self, **kwargs):
+        """ check system status for Hosted Agent """
+
+        return self.api_call('/kpi/checkHostedConnector', HTTPMethod.GET, params=kwargs)
+
+    def system_checkQueryPreview(self, **kwargs):
+        """ check system status for query preview """
+        return self.api_call('/kpi/checkQueryPreview', HTTPMethod.GET, params=kwargs)
+
+    def system_checkQuerySaveAndRunNow(self, **kwargs):
+        """ check system status for direct query """
+
+        return self.api_call('/kpi/checkQuerySaveAndRunNow', HTTPMethod.GET, params=kwargs)
+
+    def system_checkDashboardLoad(self, **kwargs):
+        """ check system status for dashboard loading """
+
+        return self.api_call('/kpi/checkDashboardLoad', HTTPMethod.GET, params=kwargs)
+
+    def system_checkWidgetLoad(self, **kwargs):
+        """ check system status for widget loading """
+
+        return self.api_call('/kpi/checkWidgetLoad', HTTPMethod.GET, params=kwargs)
+
     @property
     def getBearerToken(self):
         if self.flag == 'mgmt':

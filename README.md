@@ -45,7 +45,10 @@ Knowi is an augmented analytics platform that instantly transforms any data into
 * Single Sign On (SSO)
     * Create and manage SSO users
     * Update SSO user attributes including user content filters  
-
+* System Status Health Checks
+    * Checks all or specified Knowi components for connectivity and status report
+    > Note: This is only available for On-Premise customers and requires additional configuration. Contact support@knowi.com for assistance.
+  
 #### Installation
 We recommend using [PyPI](https://pypi.python.org/pypi) to install the Knowi SDK for Python
 ```bash
