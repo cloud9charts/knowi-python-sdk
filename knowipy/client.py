@@ -110,7 +110,8 @@ class Knowi(BaseClient):
     @validateUserParams
     def dashboard_shareViaUrl(self, *, dashboardId: int, shareType: str = 'simple', contentFilters: List[dict] = None,
                               fullUrl: bool = False, **kwargs):
-        """Retrieve a dashboard share Url for simple and secure share.
+        """Retrieve a dashboard share Url for simple and secure share. This changes the dashboard URL each time this
+        endpoint is called.
 
         :param fullUrl: (bool) - True to return full asset Url with host and shareUrl
         :param contentFilters: (List[dict]) contentFilter to filter contents.
@@ -142,6 +143,22 @@ class Knowi(BaseClient):
 
         else:
             return self.api_call(f'/dashboards/{dashboardId}/{path}', HTTPMethod.POST, data=kwargs)
+
+    @validateUserParams
+    def dashboard_hashContentFilters(self, dashboardId: int, contentFilters: List[dict] = None, **kwargs):
+        """ Generate a hash for a contentFilter without resetting or changing the dashboard URL
+
+        :param dashboardId: (int) dashboard Id to generate hash for
+        :param contentFilters: (List[dict]) contentFilter to filter contents.
+            [{"fieldName": "State", "values": ["AZ"], "operator": "="},
+            {"fieldName": "Year", "values": [2016], "operator": "="}]
+        :param kwargs:
+        :return:
+        """
+
+        kwargs.update({"contentFilters": json.dumps(contentFilters)})
+
+        return self.api_call(f'/dashboards/{dashboardId}/share/url/secure/hash', HTTPMethod.POST, data=kwargs)
 
     def dashboard_exportToPDF(self, dashboardId: int, **kwargs):
 
