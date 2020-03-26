@@ -108,11 +108,6 @@ def validateUserParams(func):
             userFilter = kwargs.get('contentFilter') or kwargs.get('contentFilters')
             _validateContentFilters(userFilter)
 
-        if kwargs.get('roles'):
-            userRole = kwargs.get("roles")
-            if not isinstance(userRole, str):
-                raise TypeError(f"expected type, string but got {type(userRole)}")
-
         # editing existing user groups
         if kwargs.get('groups'):
             keys_ = ['access_level', 'id']
