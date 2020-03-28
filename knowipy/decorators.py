@@ -142,6 +142,17 @@ def validateUserParams(func):
     return wrapper
 
 
+def validateSubCustomer(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if kwargs.get('subCustomerFilters'):
+            customerFilters = kwargs.get("subCustomerFilters")
+            _validateContentFilters(customerFilters)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 def validateQueryParams(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
