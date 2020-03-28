@@ -4,7 +4,9 @@ from typing import Dict, List, Union
 
 # Internal Imports
 from knowipy.base_client import BaseClient, HTTPMethod
-from knowipy.decorators import (validateCategoryAssets, validateQueryParams, validateShareParams, validateUserParams)
+from knowipy.decorators import (
+    validateCategoryAssets, validateQueryParams, validateShareParams, validateUserParams,
+    validateSubCustomer)
 
 
 class Knowi(BaseClient):
@@ -655,7 +657,7 @@ class Knowi(BaseClient):
                      role: str = 'user', twoFA: bool = False, **kwargs):
         """Create a new regular user with a username/password
 
-        :param email: username for new user
+        :param email: username/email for new user
         :param password: password for new user
         :param phone: phone number to associate with user. needed for two factor authentication
         :param groups: groups to associate user
@@ -943,21 +945,21 @@ class Knowi(BaseClient):
         return self.api_call('/nlp/query/parse', HTTPMethod.POST, data=kwargs)
 
     # SUB-CUSTOMER MANAGEMENT
-    @validateUserParams
-    def sso_createSubCustomer(self, *, subCustomerEmail: str, subCustomerName: str, groups: List[str] = None,
+    @validateSubCustomer
+    def sso_createSubCustomer(self, *, email: str, subCustomerName: str, groups: List[str] = None,
                               subCustomerFilters: List[dict] = None, roles: List[str] = None, **kwargs):
         """Creates a subCustomer account under the parent  customer.
 
-        :param roles:
-        :param subCustomerFilters:
-        :param subCustomerEmail: (str) First user account/email for newly created subAccount
+        :param roles: (list) clone a custom role from a parentCustomer to a subCustomer
+        :param subCustomerFilters: (list) apply a customer level contentFilter to a subCustomer
+        :param email: (str) First admin user account/email for newly created subCustomer
         :param subCustomerName: (str) Name of subCustomer account
         :param groups: (list) groups to share from parentCustomer to subCustomer
         :param kwargs:
         :return: subCustomerToken and an ssoUserToken
         """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "subCustomerUser":  subCustomerEmail,
+                       "subCustomerUser":  email,
                        "subCustomerName":  subCustomerName,
                        "contentFilter":    json.dumps(subCustomerFilters) if subCustomerFilters else [],
                        "userGroups[]":     groups,
@@ -966,14 +968,28 @@ class Knowi(BaseClient):
 
         return self.api_call('/sso/customer', HTTPMethod.POST, data=kwargs)
 
-    @validateUserParams
-    def sso_updateSubCustomer(self, *, subCustomerToken: str, subCustomerName: str = None, subCustomerEmail: str = None,
+    @validateSubCustomer
+    def sso_updateSubCustomer(self, *, subCustomerToken: str, subCustomerName: str = None, email: str = None,
                               groups: List[str] = None, refreshToken: bool = False,
                               subCustomerFilters: List[dict] = None, roles: List[str] = None,
                               overwriteRoles: bool = False,
                               **kwargs):
+        """ Update attributes an existing subCustomer
+
+        :param subCustomerToken: subCustomer token
+        :param subCustomerName: update subCustomer name
+        :param email: associate/disassociate a subCustomerUser to/from with parentCustomer group.
+        :param groups: associate a group from parentCustomer to subCustomer.
+                        Leave empty to disassociate user (email) from group, i.e. (groups=[])
+        :param refreshToken: (bool) If True, a new subCustomer token is generated
+        :param subCustomerFilters: (list) update subCustomer content filter
+        :param roles: update copied role from parentCustomer to subCustomer
+        :param overwriteRoles: (bool) If true, it overwrites existing role with new role
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "subCustomerUser":  subCustomerEmail,
+                       "subCustomerUser":  email,
                        "subCustomerName":  subCustomerName,
                        "userGroups[]":     groups if groups else [],
                        "contentFilter":    json.dumps(subCustomerFilters) if subCustomerFilters else [],
@@ -986,6 +1002,11 @@ class Knowi(BaseClient):
         return self.api_call('/sso/customer', HTTPMethod.PUT, data=kwargs)
 
     def sso_listSubCustomers(self, **kwargs):
+        """List all subCustomers within a parentCustomer
+
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken})
 
         return self.api_call('/sso/customer', HTTPMethod.GET, params=kwargs)
