@@ -5,8 +5,7 @@ from typing import Dict, List, Union
 # Internal Imports
 from knowipy.base_client import BaseClient, HTTPMethod
 from knowipy.decorators import (
-    validateCategoryAssets, validateQueryParams, validateShareParams, validateUserParams,
-    validateSubCustomer)
+    validateCategoryAssets, validateQueryParams, validateShareParams, validateSubCustomer, validateUserParams)
 
 
 class Knowi(BaseClient):
@@ -748,7 +747,7 @@ class Knowi(BaseClient):
             "optimized":     kwargs.get('optimized', False),  # If True, output as json compressed gzip
             "version":       kwargs.get('version', 0),  # used with optimized
             "limit":         limit,
-            "runtimeTokens": json.dumps(runtimeToken)
+            "runtimeTokens": json.dumps(runtimeToken) if runtimeToken else None
         })
 
         return self.api_call(f'/datasets', HTTPMethod.GET, params=kwargs)
