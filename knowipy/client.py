@@ -1000,13 +1000,15 @@ class Knowi(BaseClient):
 
         return self.api_call('/sso/customer', HTTPMethod.PUT, data=kwargs)
 
-    def sso_listSubCustomers(self, **kwargs):
+    def sso_listSubCustomers(self, byName: str = None, **kwargs):
         """List all subCustomers within a parentCustomer
 
+        :param byName: filter subCustomers by name
         :param kwargs:
         :return:
         """
-        kwargs.update({"ssoCustomerToken": self.ssoCustomerToken})
+        kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
+                       "filterByName":     byName})
 
         return self.api_call('/sso/customer', HTTPMethod.GET, params=kwargs)
 
@@ -1019,3 +1021,15 @@ class Knowi(BaseClient):
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken})
 
         return self.api_call(f'/sso/customer/{identifier}', HTTPMethod.GET, params=kwargs)
+
+    def sso_listSubCustomerUsers(self, identifier: Union[str, int], **kwargs):
+        """List users belonging to subCustomer
+
+        :param identifier: this can be subCustomerToken or subCustomerId
+        :param kwargs:
+        :return:
+        """
+
+        kwargs.update({"ssoCustomerToken": self.ssoCustomerToken})
+
+        return self.api_call(f'/sso/customer/{identifier}/users', HTTPMethod.GET, params=kwargs)
