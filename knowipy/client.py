@@ -915,6 +915,24 @@ class Knowi(BaseClient):
 
         return self.api_call('/sso/session/lastActive', HTTPMethod.GET, params=kwargs)
 
+    def sso_sessionKeepAlive(self, sessionToken: str, **kwargs):
+        """Extend lifetime of SSO session token by 30 minutes
+
+        :param sessionToken: (str) session token after authenticating sso user
+        """
+
+        kwargs.update({"token": sessionToken})
+        return self.api_call('/sso/session/keepAlive', HTTPMethod.PUT, params=kwargs)
+
+    def sso_logout(self, sessionToken: str, **kwargs):
+        """Logout and terminate an SSO session
+
+        :param sessionToken: (str) session token after authenticating sso user
+        """
+
+        kwargs.update({"token": sessionToken})
+        return self.api_call('/sso/user/logout', HTTPMethod.PUT, params=kwargs)
+
     # SSO USER NATURAL LANGUAGE PROCESSING
     def sso_listNlpSuggestions(self, *, sessionToken: str, query: str, **kwargs):
         kwargs.update({"token": sessionToken, "query": query})
