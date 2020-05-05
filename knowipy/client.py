@@ -58,7 +58,7 @@ class Knowi(BaseClient):
         return self.api_call('/dashboards', HTTPMethod.GET, params=kwargs)
 
     def dashboard_getById(self, *, dashboardId: int, **kwargs):
-        """Retrieve dashboard by an Id"""
+        """Retrieve dashboard details by Id"""
         return self.api_call(f'/dashboards/{dashboardId}', HTTPMethod.GET, params=kwargs)
 
     def dashboard_listWidgetsInDashboard(self, *, dashboardId: int, **kwargs):
@@ -708,9 +708,22 @@ class Knowi(BaseClient):
         return self.api_call(f'/users/{userId}', HTTPMethod.PUT, json=kwargs)
 
     def users_delete(self, *, userId: int, **kwargs):
+        """ delete users and all assets within account
+
+        :param userId: user ID
+        :param kwargs:
+        :return:
+        """
         return self.api_call(f'/users/{userId}', HTTPMethod.DELETE, params=kwargs)
 
     def users_transferUserAssets(self, *, fromUserId: int, toUserId: int, **kwargs):
+        """ transfer user assets to a different user before deleting account
+
+        :param fromUserId: source user id to be deleted
+        :param toUserId: destination user ID assets will be transferred to
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"toUserId": toUserId})
         return self.api_call(f'/users/{fromUserId}/moveAssets', HTTPMethod.PUT, json=kwargs)
 
