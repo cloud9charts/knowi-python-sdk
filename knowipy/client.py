@@ -166,11 +166,20 @@ class Knowi(BaseClient):
         return self.api_call(f'/dashboards/{dashboardId}/export/pdf', HTTPMethod.GET, params=kwargs)
 
     def dashboard_edit(self, dashboardId: int, newName: Union[str, int], categories: List[int] = None, **kwargs):
-        kwargs.update({"dashName": newName, "categories": [] if not categories else categories})
+        """ edit an existing dashboard
+
+        :param dashboardId: dashboard ID
+        :param newName: updated dashboard name
+        :param categories: assign a array of category IDs to dashboard
+        :param kwargs:
+        :return:
+        """
+        kwargs.update({"dashName": newName, "categories": categories or []})  # TODO: test operator when cat is None
 
         return self.api_call(f'/dashboards/{dashboardId}', HTTPMethod.PUT, json=kwargs)
 
     def dashboard_listFilterSet(self, **kwargs):
+        """ list all dashboard filtersets """
         return self.api_call('/dashboards/filterset', HTTPMethod.GET, params=kwargs)
 
     @validateShareParams
@@ -262,9 +271,9 @@ class Knowi(BaseClient):
     def widget_create(self, *, datasetId: int, widgetName: Union[str, int], widgetType: int = None,
                       chartProps: Dict = None, **kwargs):
 
-        kwargs.update({"widgetName":      widgetName,
-                       "datasetId":       datasetId,
-                       "widgetType":      widgetType,
+        kwargs.update({"widgetName": widgetName,
+                       "datasetId": datasetId,
+                       "widgetType": widgetType,
                        "chartProperties": chartProps
                        })
 
@@ -281,9 +290,9 @@ class Knowi(BaseClient):
     def widget_edit(self, *, widgetId: int, categories: List[int] = None, widgetType: int = None,
                     chartProps: Dict = None, **kwargs):
 
-        kwargs.update({"widgetName":      kwargs.get("widgetName"),
-                       "categories":      [] if not categories else categories,
-                       "widgetType":      widgetType,
+        kwargs.update({"widgetName": kwargs.get("widgetName"),
+                       "categories": [] if not categories else categories,
+                       "widgetType": widgetType,
                        "chartProperties": chartProps
                        })
 
@@ -306,24 +315,24 @@ class Knowi(BaseClient):
 
         # TODO: Not yet implemented
         kwargs.update({
-            "authEndPoint":      kwargs.get('authEndPoint'),  # restapi
-            "authHeaders":       kwargs.get('authHeaders'),  # restapi
-            "authPostPayload":   kwargs.get('authPostPayload'),  # restapi
-            "authUrlParams":     kwargs.get('authUrlParams'),  # restapi
-            "datasource":        kwargs.get('datasource'),
-            "dataverse":         kwargs.get('dataverse'),  # couchbase analytics
-            "dbName":            kwargs.get('dbName'),
-            "host":              kwargs.get('host'),
-            "name":              kwargs.get('name'),
-            "password":          kwargs.get('password'),
-            "port":              kwargs.get('port'),
-            "privateConnector":  kwargs.get("privateConnector", None),  # if privateDatasource is true
+            "authEndPoint": kwargs.get('authEndPoint'),  # restapi
+            "authHeaders": kwargs.get('authHeaders'),  # restapi
+            "authPostPayload": kwargs.get('authPostPayload'),  # restapi
+            "authUrlParams": kwargs.get('authUrlParams'),  # restapi
+            "datasource": kwargs.get('datasource'),
+            "dataverse": kwargs.get('dataverse'),  # couchbase analytics
+            "dbName": kwargs.get('dbName'),
+            "host": kwargs.get('host'),
+            "name": kwargs.get('name'),
+            "password": kwargs.get('password'),
+            "port": kwargs.get('port'),
+            "privateConnector": kwargs.get("privateConnector", None),  # if privateDatasource is true
             "privateDatasource": kwargs.get('privateDatasource', False),
-            "tunnel":            kwargs.get("tunnel", False),
-            "tunnelAddress":     kwargs.get("tunnelAddress"),  # if tunnel is true
-            "url":               kwargs.get('url'),  # restapi/restHost
-            "userId":            kwargs.get("userId"),  # user
-            "version":           kwargs.get("version", "5.X.X")  # elastic ["Older Versions"]
+            "tunnel": kwargs.get("tunnel", False),
+            "tunnelAddress": kwargs.get("tunnelAddress"),  # if tunnel is true
+            "url": kwargs.get('url'),  # restapi/restHost
+            "userId": kwargs.get("userId"),  # user
+            "version": kwargs.get("version", "5.X.X")  # elastic ["Older Versions"]
         })
 
         # return self.api_call('/datasources', HTTPMethod.POST, json=kwargs)
@@ -385,6 +394,12 @@ class Knowi(BaseClient):
         return self.api_call(f'/queries/{queryId}', HTTPMethod.GET, params=kwargs)
 
     def query_refresh(self, *, queryId: int, **kwargs):
+        """executes an existing query
+
+        :param queryId: (int) unique query id
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"runNow": True})
 
         return self.api_call(f'/queries/{queryId}/refreshQuery', HTTPMethod.POST, json=kwargs)
@@ -402,27 +417,37 @@ class Knowi(BaseClient):
 
         kwargs.update({
             "properties": {
-                "c9QLFilter":      queryProperty.get("c9QLFilter", "select *"),
-                "categories":      queryProperty.get("categories"),
-                "datasourceId":    datasourceId,
-                "description":     queryProperty.get("description"),
-                "direct":          queryProperty.get("direct", False),
-                "dsName":          queryProperty.get("dsName"),
-                "entityName":      queryName,
-                "queryStr":        str(queryProperty.get("queryStr")),
-                "triggered":       queryProperty.get("triggered"),
-                "overrideVals":    queryProperty.get("overrideVals", "All"),
+                "c9QLFilter": queryProperty.get("c9QLFilter", "select *"),
+                "categories": queryProperty.get("categories"),
+                "datasourceId": datasourceId,
+                "description": queryProperty.get("description"),
+                "direct": queryProperty.get("direct", False),
+                "dsName": queryProperty.get("dsName"),
+                "entityName": queryName,
+                "queryStr": str(queryProperty.get("queryStr")),
+                "triggered": queryProperty.get("triggered"),
+                "overrideVals": queryProperty.get("overrideVals", "All"),
+                "urlParams": queryProperty.get("urlParams"),  # for restapi
+                "headers": queryProperty.get("headers"),  # for restapi
+                "endPoint": queryProperty.get("endPoint"),  # for restapi
+                "httpPost": queryProperty.get("httpPost"),
+                "jsonPayload": queryProperty.get("jsonPayload"),
                 "c9ExportDataset": queryProperty.get("c9ExportDataset", None)  # for cloud9charts warehouse
             },
-            "runNow":     queryProperty.get("runNow", True),
-            "drafted":    queryProperty.get("drafted", None)
+            "runNow": queryProperty.get("runNow", True),
+            "drafted": queryProperty.get("drafted", None)
         })
 
         return self.api_call('/queries', HTTPMethod.POST, json=kwargs)
 
     @validateQueryParams
     def query_edit(self, *, queryId: int = None, datasourceId: int = None, queryProperty: dict = None, **kwargs):
-        """ edit an existing query
+        """ edit an existing query. All existing fields will be replaced if not included.
+        Must include the following `queryProperties` argument when modifying a query:
+                {
+                    "queryStr":   "",
+                    "entityName": ""
+                }
 
         :param queryId: query ID to edit
         :param datasourceId: datasource ID for existing query
@@ -432,30 +457,44 @@ class Knowi(BaseClient):
         """
         kwargs.update({
             "properties": {
-                "c9QLFilter":      queryProperty.get("c9QLFilter"),
-                "categories":      queryProperty.get("categories"),
-                "datasourceId":    datasourceId,
-                "description":     queryProperty.get("description"),
-                "direct":          queryProperty.get("direct"),
-                "dsName":          queryProperty.get("dsName"),
-                "entityName":      queryProperty.get("entityName"),
-                "queryStr":        str(queryProperty.get("queryStr")),
-                "triggered":       queryProperty.get("triggered"),
-                "overrideVals":    queryProperty.get("overrideVals", "All"),
+                "c9QLFilter": queryProperty.get("c9QLFilter"),
+                "categories": queryProperty.get("categories"),
+                "datasourceId": datasourceId,
+                "description": queryProperty.get("description"),
+                "direct": queryProperty.get("direct"),
+                "dsName": queryProperty.get("dsName"),
+                "entityName": queryProperty.get("entityName"),
+                "queryStr": str(queryProperty.get("queryStr")),
+                "triggered": queryProperty.get("triggered"),
+                "overrideVals": queryProperty.get("overrideVals", "All"),
                 "c9ExportDataset": queryProperty.get("c9ExportDataset")  # for cloud9charts warehouse
             },
-            "runNow":     queryProperty.get("runNow", True),
-            "drafted":    queryProperty.get("drafted")
+            "runNow": queryProperty.get("runNow", True),
+            "drafted": queryProperty.get("drafted")
         })
 
         return self.api_call(f'/queries/{queryId}', HTTPMethod.PUT, json=kwargs)
 
     def query_delete(self, *, queryId: int, removeWidgets: bool = False, **kwargs):
+        """delete an existing query
+
+        :param queryId: query Id
+        :param removeWidgets:
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"removeWidgets": removeWidgets})
 
         return self.api_call(f'/queries/{queryId}', HTTPMethod.DELETE, params=kwargs)
 
     def query_clone(self, *, queryId: int, clonedName: str, **kwargs):
+        """clone an existing query
+
+        :param queryId: query ID
+        :param clonedName: name of cloned query
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"clonedQueryName": clonedName})
 
         return self.api_call(f'/queries/{queryId}', HTTPMethod.POST, json=kwargs)
@@ -578,6 +617,14 @@ class Knowi(BaseClient):
 
     @validateCategoryAssets
     def category_removeCatFromAsset(self, *, assetType: int, categoryId: int, assetId: int, **kwargs):
+        """ dissociate a category from an asset
+
+        :param assetType:
+        :param categoryId:
+        :param assetId:
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"category": categoryId, "objectId": assetId})
 
         return self.api_call(f'/category/remove?objectType={assetType}', HTTPMethod.POST, json=kwargs)
@@ -603,17 +650,23 @@ class Knowi(BaseClient):
         return self.api_call('/groups', HTTPMethod.GET, params=kwargs)
 
     def group_listByUser(self, *, userId: int, **kwargs):
-        """Retrieve groups for a user by an user id"""
+        """Retrieve a list of groups a user belongs to"""
         return self.api_call(f'/users/{userId}/groups', HTTPMethod.GET, params=kwargs)
 
     def group_getGroupDetails(self, *, groupId: int, sharing: bool = False, **kwargs):
-        """Retrieve group by an id"""
+        """ Retrieve group details and list of users in group
+
+        :param groupId:
+        :param sharing: (bool) Returns a list of assets shared to group
+        :param kwargs:
+        :return:
+        """
         kwargs.update({"withSharing": sharing})
 
         return self.api_call(f'/groups/{groupId}', HTTPMethod.GET, params=kwargs)
 
     def group_getGroupDetailsForUser(self, *, userId: int, groupId: int, sharing: bool = False, **kwargs):
-        """Retrieve group details for a user by id"""
+        """Returns a group details and any assets shared to a user in the group"""
         kwargs.update({"withSharing": sharing})
 
         return self.api_call(f'/users/{userId}/groups/{groupId}', HTTPMethod.GET, params=kwargs)
@@ -668,17 +721,17 @@ class Knowi(BaseClient):
         """
 
         kwargs.update({
-            "username":           email,
-            "password":           password,
-            "phone":              phone,
-            "twoFactorAuth":      twoFA,
-            "timezone":           kwargs.get('timezone', None),
-            "autoShareTo":        kwargs.get('autoShareTo', []),
-            "contentFilters":     kwargs.get('contentFilters', []),
+            "username": email,
+            "password": password,
+            "phone": phone,
+            "twoFactorAuth": twoFA,
+            "timezone": kwargs.get('timezone', None),
+            "autoShareTo": kwargs.get('autoShareTo', []),
+            "contentFilters": kwargs.get('contentFilters', []),
             "defaultDashboardId": kwargs.get('defaultDashboardId', None),
-            "userInviteJson":     {
+            "userInviteJson": {
                 "userGroups": groups,
-                "userRole":   role
+                "userRole": role
             }
         })
 
@@ -693,14 +746,14 @@ class Knowi(BaseClient):
         :return:
         """
         kwargs.update({
-            "name":               kwargs.get("name"),
-            "roles":              kwargs.get("roles"),
-            "groups":             kwargs.get("groups"),
-            "autoShareTo":        kwargs.get("autoShareTo"),
-            "twoFactorAuth":      kwargs.get("twoFA"),
-            "phone":              kwargs.get('phone'),
-            "contentFilters":     kwargs.get('contentFilters'),
-            "timezone":           kwargs.get('timezone'),
+            "name": kwargs.get("name"),
+            "roles": kwargs.get("roles"),
+            "groups": kwargs.get("groups"),
+            "autoShareTo": kwargs.get("autoShareTo"),
+            "twoFactorAuth": kwargs.get("twoFA"),
+            "phone": kwargs.get('phone'),
+            "contentFilters": kwargs.get('contentFilters'),
+            "timezone": kwargs.get('timezone'),
             "defaultDashboardId": kwargs.get("defaultDashboardId")
 
         })
@@ -753,13 +806,13 @@ class Knowi(BaseClient):
             raise ValueError(f'exportFormat=`{exportFormat}` must be "csv" or "json"')
 
         kwargs.update({
-            "identifier":    identifier,
-            "entityName":    entityName,
-            "c9SqlFilter":   c9Filter,
-            "exportFormat":  exportFormat.lower(),
-            "optimized":     kwargs.get('optimized', False),  # If True, output as json compressed gzip
-            "version":       kwargs.get('version', 0),  # used with optimized
-            "limit":         limit,
+            "identifier": identifier,
+            "entityName": entityName,
+            "c9SqlFilter": c9Filter,
+            "exportFormat": exportFormat.lower(),
+            "optimized": kwargs.get('optimized', False),  # If True, output as json compressed gzip
+            "version": kwargs.get('version', 0),  # used with optimized
+            "limit": limit,
             "runtimeTokens": json.dumps(runtimeToken) if runtimeToken else None
         })
 
@@ -838,12 +891,12 @@ class Knowi(BaseClient):
         :param kwargs:
         :return:
         """
-        kwargs.update({"user":             email,
+        kwargs.update({"user": email,
                        "ssoCustomerToken": self.ssoCustomerToken,
-                       "userGroups[]":     userGroups if userGroups else [],
-                       "role":             kwargs.get('role', 'user'),
-                       "contentFilter":    json.dumps(userFilters) if userFilters else [],
-                       "refresh":          updateUser
+                       "userGroups[]": userGroups if userGroups else [],
+                       "role": kwargs.get('role', 'user'),
+                       "contentFilter": json.dumps(userFilters) if userFilters else [],
+                       "refresh": updateUser
                        })
 
         return self.api_call('/sso/user/create', HTTPMethod.POST, data=kwargs)
@@ -868,16 +921,16 @@ class Knowi(BaseClient):
     @validateUserParams
     def sso_updateUserContentFilters(self, *, email: str, userFilters: List[dict], **kwargs):
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "user":             email,
-                       "contentFilter":    json.dumps(userFilters) if userFilters else []
+                       "user": email,
+                       "contentFilter": json.dumps(userFilters) or []
                        })
 
         return self.api_call('/sso/user/contentfilters/update', HTTPMethod.POST, data=kwargs)
 
     def sso_deleteUser(self, *, email: str, userToken: str, **kwargs):
-        kwargs.update({"user":             email,
+        kwargs.update({"user": email,
                        "ssoCustomerToken": self.ssoCustomerToken,
-                       "userToken":        userToken
+                       "userToken": userToken
                        })
 
         return self.api_call('/sso/user/remove', HTTPMethod.POST, data=kwargs)
@@ -953,9 +1006,9 @@ class Knowi(BaseClient):
         return self.api_call('/sso/nlp/suggestions', HTTPMethod.GET, params=kwargs)
 
     def sso_parseNlpSuggestions(self, *, sessionToken: str, query: str, datasetId: int, **kwargs):
-        kwargs.update({"query":     query,
+        kwargs.update({"query": query,
                        "datasetId": datasetId,
-                       "format":    kwargs.get("format", "json")
+                       "format": kwargs.get("format", "json")
                        })
         params = {"token": sessionToken, }
 
@@ -967,9 +1020,9 @@ class Knowi(BaseClient):
         return self.api_call('/nlp/suggestions', HTTPMethod.GET, params=kwargs)
 
     def nlp_parseNlpSuggestions(self, *, query: str, datasetId: int, **kwargs):
-        kwargs.update({"query":     query,
+        kwargs.update({"query": query,
                        "datasetId": datasetId,
-                       "format":    kwargs.get("format", "json")
+                       "format": kwargs.get("format", "json")
                        })
 
         return self.api_call('/nlp/query/parse', HTTPMethod.POST, data=kwargs)
@@ -989,11 +1042,11 @@ class Knowi(BaseClient):
         :return: subCustomerToken and an ssoUserToken
         """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "subCustomerUser":  email,
-                       "subCustomerName":  subCustomerName,
-                       "contentFilter":    json.dumps(subCustomerFilters) if subCustomerFilters else [],
-                       "userGroups[]":     groups,
-                       "roles[]":          roles
+                       "subCustomerUser": email,
+                       "subCustomerName": subCustomerName,
+                       "contentFilter": json.dumps(subCustomerFilters) if subCustomerFilters else [],
+                       "userGroups[]": groups,
+                       "roles[]": roles
                        })
 
         return self.api_call('/sso/customer', HTTPMethod.POST, data=kwargs)
@@ -1019,14 +1072,14 @@ class Knowi(BaseClient):
         :return:
         """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "subCustomerUser":  email,
-                       "subCustomerName":  subCustomerName,
-                       "userGroups[]":     groups if groups else [],
-                       "contentFilter":    json.dumps(subCustomerFilters) if subCustomerFilters else [],
-                       "refreshToken":     refreshToken,
+                       "subCustomerUser": email,
+                       "subCustomerName": subCustomerName,
+                       "userGroups[]": groups if groups else [],
+                       "contentFilter": json.dumps(subCustomerFilters) if subCustomerFilters else [],
+                       "refreshToken": refreshToken,
                        "subCustomerToken": subCustomerToken,
-                       "roles[]":          roles,
-                       "overwriteRoles":   overwriteRoles
+                       "roles[]": roles,
+                       "overwriteRoles": overwriteRoles
                        })
 
         return self.api_call('/sso/customer', HTTPMethod.PUT, data=kwargs)
@@ -1039,7 +1092,7 @@ class Knowi(BaseClient):
         :return:
         """
         kwargs.update({"ssoCustomerToken": self.ssoCustomerToken,
-                       "filterByName":     byName})
+                       "filterByName": byName})
 
         return self.api_call('/sso/customer', HTTPMethod.GET, params=kwargs)
 
