@@ -110,29 +110,23 @@ def validateUserParams(func):
 
         # editing existing user groups
         if kwargs.get('groups'):
-            keys_ = ['access_level', 'id']
             userGroups = kwargs.get("groups")
             if not isinstance(userGroups, List):
                 raise TypeError(f"groups must be a array of dicts")
 
             for i in userGroups:
-                # TODO: refactor to use _check_dict_key(userGroups, keys_)
                 if not all(key in i for key in ['access_level', 'id']):
                     raise e.KnowiException('missing/invalid properties. Required keys are `access_level` `id`')
                 if i['access_level'] not in ACCESS_LEVEL:
                     raise e.KnowiException(f'access_level must be `1` or `2`, got {i["access_level"]}')
 
         if kwargs.get('autoShareTo'):
-            # keys_ = ['id']
             autoShare = kwargs.get('autoShareTo')
             if isinstance(autoShare, dict):
                 autoShare = [autoShare]
-            elif isinstance(autoShare, List):
-                pass
             else:
                 raise TypeError('`autoShareTo` must be dict of array of dict ')
 
-            # TODO: refactor to use _check_dict_key(autoShare, keys_)
             for i in autoShare:
                 if not all(key in i for key in ['id']):
                     raise e.KnowiException('missing `id` field')
@@ -157,14 +151,17 @@ def validateQueryParams(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
 
-        queryProperty = kwargs.get("queryProperty")
-        if queryProperty.get('categories'):
-            if not isinstance(queryProperty['categories'], list):
-                raise e.KnowiException(f"invalid categories type should be list of int i.e. `[123, 456]`")
-        if queryProperty.get("direct"):
+        props = kwargs['queryProperty']['properties']
+        if props.get('categories'):
+            if not isinstance(props['categories'], list):
+                kwargs['queryProperty']['properties']['categories'] = [props['categories']]
+
+        if props.get("direct"):
             if not isinstance("direct", bool):
                 raise e.KnowiException(f"invalid `direct` type, should be a bool: (`True`, `False`)")
 
+        if props.get("jsonPayload") and props.get("urlParams"):
+            raise e.KnowiException(f"invalid attributes. Can't use both `jsonPayload` and `urlParams`")
         return func(*args, **kwargs)
 
     return wrapper
