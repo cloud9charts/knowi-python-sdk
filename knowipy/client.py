@@ -1,6 +1,6 @@
 # Standard Imports
 import json
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 # Internal Imports
 from knowipy.base_client import BaseClient, HTTPMethod
@@ -778,10 +778,10 @@ class Knowi(BaseClient):
         :return:
         """
         kwargs.update({"toUserId": toUserId})
-        return self.api_call(f'/users/{fromUserId}/moveAssets', HTTPMethod.PUT, json=kwargs)
+        return self.api_call(f'/users/{fromUserId}/moveAssets', HTTPMethod.PUT, params=kwargs)
 
     def dataset_getData(self, *, identifier: str = None, entityName: str = None, c9Filter: str = None,
-                        exportFormat: str = 'json', limit: int = 10000, runtimeToken: List[dict] = None, **kwargs):
+                        exportFormat: str = 'json', limit: Optional[int] = 10000, runtimeToken: List[dict] = None, **kwargs):
         """Access data from a widget/query
 
         :param identifier: query identifier. From UI go to query status to get `identifier`
