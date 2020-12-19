@@ -216,7 +216,7 @@ class Knowi(BaseClient):
             [{"fieldName": "State", "values": ["AZ"], "operator": "="},
             {"fieldName": "Year", "values": [2016], "operator": "="}]
         :param widgetId: (int) widget Id to share via Url
-        :param shareType: (bool) If true a new shareUrl will be generated
+        :param shareType: (str) type of url to be generated: simple or secure
 
         """
         if shareType == 'simple':
@@ -704,6 +704,20 @@ class Knowi(BaseClient):
     def users_getById(self, *, userId: int, **kwargs):
         return self.api_call(f'/users/{userId}', HTTPMethod.GET, params=kwargs)
 
+    def users_getByUsername(self, *, username: str = None, userType: str = None, **kwargs):
+        """Searches for a user by username or user type. Returns all users if no parameter is used.
+
+        :param username: username of user to search
+        :param userType: type of user. Options are: regular, sso, external
+        :param kwargs:
+        :return:
+        """
+        kwargs.update({
+            "username": username,
+            "userType": userType
+        })
+        return self.api_call(f'/users/search', HTTPMethod.GET, params=kwargs)
+
     @validateUserParams
     def users_create(self, *, email: str, password: str, phone: int, groups: List[dict] = None,
                      role: str = 'user', twoFA: bool = False, **kwargs):
@@ -781,7 +795,8 @@ class Knowi(BaseClient):
         return self.api_call(f'/users/{fromUserId}/moveAssets', HTTPMethod.PUT, params=kwargs)
 
     def dataset_getData(self, *, identifier: str = None, entityName: str = None, c9Filter: str = None,
-                        exportFormat: str = 'json', limit: Optional[int] = 10000, runtimeToken: List[dict] = None, **kwargs):
+                        exportFormat: str = 'json', limit: Optional[int] = 10000, runtimeToken: List[dict] = None,
+                        **kwargs):
         """Access data from a widget/query
 
         :param identifier: query identifier. From UI go to query status to get `identifier`
