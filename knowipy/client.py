@@ -674,7 +674,7 @@ class Knowi(BaseClient):
     def group_create(self, *, groupName: Union[str, int], **kwargs):
         kwargs.update({"groupName": groupName})
 
-        return self.api_call('/groups', HTTPMethod.POST, json=kwargs)
+        return self.api_call('/groups', HTTPMethod.POST, data=kwargs)
 
     def group_createGroupForUser(self, *, groupName: Union[str, int], userId: int, **kwargs):
         kwargs.update({"groupName": groupName})
@@ -949,6 +949,21 @@ class Knowi(BaseClient):
                        })
 
         return self.api_call('/sso/user/remove', HTTPMethod.POST, data=kwargs)
+
+    def sso_getManagementCredentials(self, *, sessionToken: str, **kwargs):
+        kwargs.update({"token": sessionToken})
+
+        return self.api_call('/sso/management/client', HTTPMethod.GET, params=kwargs)
+
+    def sso_createManagementCredentials(self, *, sessionToken: str, **kwargs):
+        kwargs.update({"token": sessionToken})
+
+        return self.api_call('/sso/management/client', HTTPMethod.POST, data=kwargs)
+
+    def sso_disableManagementCredentials(self, *, sessionToken: str, **kwargs):
+        kwargs.update({"token": sessionToken})
+
+        return self.api_call('/sso/management/client', HTTPMethod.DELETE, params=kwargs)
 
     def sso_listDashboards(self, *, sessionToken: str, **kwargs):
         """List all dashboards belonging to an SSO user
