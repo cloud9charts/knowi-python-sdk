@@ -1,6 +1,6 @@
 # Standard Imports
 import json
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional, Union
 
 # Internal Imports
 from knowipy.base_client import BaseClient, HTTPMethod
@@ -189,7 +189,23 @@ class Knowi(BaseClient):
         return self.api_call(f'/dashboards/filterset/{filterId}/share', HTTPMethod.PUT, json=kwargs)
 
     def dashboard_deleteFilterSet(self, *, filterId: int, **kwargs):
+        """removes a filterset from a dashboard"""
         return self.api_call(f'/dashboards/filterset/{filterId}', HTTPMethod.DELETE, params=kwargs)
+
+    def dashboard_addWidgets(self, *, dashboardId: int, widgetId: int, row: int, col: int, x: int, y: int, **kwargs):
+        """adds a widget to a dashboard"""
+        kwargs.update({
+            "row": row,
+            "col": col,
+            "size_x": x,
+            "size_y": y
+        })
+        return self.api_call(f'/dashboards/{dashboardId}/{widgetId}', HTTPMethod.PUT, json=kwargs)
+
+    def dashboard_removeWidgets(self, *, dashboardId: int, widgetId: int, **kwargs):
+        """removes a widget to a dashboard"""
+
+        return self.api_call(f'/dashboards/{dashboardId}/{widgetId}', HTTPMethod.DELETE, json=kwargs)
 
     # WIDGETS
     def widget_list(self, *, categories: List[int] = None, **kwargs):
